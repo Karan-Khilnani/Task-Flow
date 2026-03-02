@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaskFlow {% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>TaskFlow</span>
+    </div>
+    <div class="nav-right">
+
+      <!-- THEME SWITCHER -->
+      <div class="theme-switcher">
+        <button class="theme-btn active" data-theme="light" title="Light">☀️</button>
+        <button class="theme-btn" data-theme="dark" title="Dark">🌙</button>
+        <button class="theme-btn" data-theme="ocean" title="Ocean">🌊</button>
+        <button class="theme-btn" data-theme="forest" title="Forest">🌿</button>
+        <button class="theme-btn" data-theme="sunset" title="Sunset">🌅</button>
+      </div>
+
+      {% if user.is_authenticated %}
+        <span class="nav-user"><i class="fa-solid fa-user"></i> {{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="main-container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}| My Tasks{% endblock %}
+
+{% block content %}
+<div class="tasks-header">
+  <h1>My <span>Tasks</span></h1>
+  <p>Stay focused. Get things done.</p>
+</div>
+
+<!-- Stats bar -->
+<!-- Stats bar — uses real context from views.py -->
+<div class="task-stats">
+  <div class="stat-pill"><span class="dot dot-total"></span> Total: {{ total }}</div>
+  <div class="stat-pill"><span class="dot dot-done"></span> Done: {{ completed }}</div>
+  <div class="stat-pill"><span class="dot dot-left"></span> Left: {{ remaining }}</div>
+</div>
+
+<!-- Add Task -->
+<div class="add-task-card">
+  <form method="POST" class="add-task-form">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="✏️  What needs to be done?" required autocomplete="off">
+    <button type="submit" class="btn btn-primary">
+      <i class="fa-solid fa-plus"></i> Add
+    </button>
+  </form>
+</div>
+
+<!-- Task List -->
+<div class="task-list">
+  {% for task in tasks %}
+    <div class="task-item {% if task.completed %}completed{% endif %}">
+      <span class="task-text">
+        {% if task.completed %}
+          <i class="fa-solid fa-circle-check" style="color: var(--success); margin-right:6px;"></i>
+        {% else %}
+          <i class="fa-regular fa-circle" style="color: var(--text-muted); margin-right:6px;"></i>
+        {% endif %}
+        {{ task.title }}
+      </span>
+      <div class="task-actions">
+        <a href="{% url 'complete_task' task.id %}" class="icon-btn complete">
+          <i class="fa-solid fa-check"></i> Done
+        </a>
+        <a href="{% url 'delete_task' task.id %}" class="icon-btn delete">
+          <i class="fa-solid fa-trash"></i> Delete
+        </a>
+      </div>
+    </div>
+  {% empty %}
+    <div class="empty-state">
+      <i class="fa-solid fa-clipboard-list"></i>
+      <p>No tasks yet — add one above!</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
