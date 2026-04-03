@@ -16,7 +16,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  #build:
+  deploy:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -34,3 +35,25 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/,ssh/
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.sshid_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Deploy to aws
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_IP }} << 'EOF'
+          
+          cd /home/ubuntu/
+          source env/bin/activate
+
+          git pull origin main
+
+          pip install -r requirements.txt
+
+          cd /home/ubuntu/<project_folder_name>
+          python manage.py migrate
+
+          sudo supervisorctl restart all
+          sudo systemctl restart nginx
